@@ -1,5 +1,8 @@
 #! -*- coding: utf-8 -*-
 
+from flask import Flask,render_template,request
+from flask import views
+
 
 from tqdm import tqdm
 import os, json, codecs
@@ -11,7 +14,7 @@ from keras.callbacks import Callback
 from keras.optimizers import Adam
 import pandas as pd
 
-from flask import Flask,render_template
+
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
@@ -180,12 +183,29 @@ model.compile(optimizer=Adam(1e-5))
 # evaluator = Evaluate()
 model.load_weights('./best_model.weights')
 
-abstract = gen_sent(model, tokenizer, s, topk=2)
  
 app = Flask(__name__)     # 创建一个Flask对象，__name__传成其他字符串也行。
+
 @app.route('/summary')
 def gen_abstract():
-    
+       pass
+
+class AbstractView(views.MethodView):
+    methods = ['GET', 'POST']
+ 
+    def get(self):
+        print("123")
+        return render_template('summary.html')
+ 
+    def post(self):
+        art = request.form.get("article")
+        print(art)
+        abstract = gen_sent(model, tokenizer, art, topk=2)
+        return abstract
+ 
+app.add_url_rule('/abstract.html', view_func=AbstractView.as_view(name='abstract'))
+ 
+
 
 @app.route('/')
 def hello_world():
