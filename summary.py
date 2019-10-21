@@ -3,7 +3,7 @@
 from flask import Flask,render_template,request
 from flask import views
 
-
+import time
 from tqdm import tqdm
 import os, json, codecs
 from bert4keras.bert import load_pretrained_model
@@ -14,8 +14,6 @@ from keras.callbacks import Callback
 from keras.optimizers import Adam
 import tensorflow as tf
 import pandas as pd
-
-
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
@@ -186,13 +184,8 @@ print("开始加载模型参数...")
 # evaluator = Evaluate()
 model.load_weights('./best_model.weights')
 graph = tf.get_default_graph()
-
  
 app = Flask(__name__)     # 创建一个Flask对象，__name__传成其他字符串也行。
-
-@app.route('/summary')
-def gen_abstract():
-       pass
 
 class AbstractView(views.MethodView):
     methods = ['GET', 'POST']
@@ -203,15 +196,16 @@ class AbstractView(views.MethodView):
  
     def post(self):
         art = request.form.get("article")
-        print(art)
+        print("原文：", art)
+        start = time.time()
         with graph.as_default():
             abstract = gen_sent(model, tokenizer,art)
+        end = time.time()
+        print("time:", end-start)
         print("摘要：", abstract)
         return abstract
  
 app.add_url_rule('/abstract.html', view_func=AbstractView.as_view(name='abstract'))
- 
-
 
 @app.route('/')
 def hello_world():
