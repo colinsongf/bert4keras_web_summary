@@ -12,11 +12,12 @@ from keras.layers import *
 from keras import backend as K
 from keras.callbacks import Callback
 from keras.optimizers import Adam
+import tensorflow as tf
 import pandas as pd
 
 
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
 config_path = 'seq2seq_config.json'
 min_count = 32
@@ -156,6 +157,7 @@ for c in chars:
         token_dict[c] = len(token_dict)
         keep_words.append(_token_dict[c])
 
+
 # 建立分词器
 tokenizer = SimpleTokenizer(token_dict)
 
@@ -166,7 +168,7 @@ model = load_pretrained_model(
     keep_words=keep_words,  # 只保留keep_words中的字，精简原字表
 )
 
-# model.summary()
+model.summary()
 
 # 交叉熵作为loss，并mask掉输入部分的预测
 # 目标tokens
@@ -180,8 +182,10 @@ cross_entropy = K.sum(cross_entropy * y_mask) / K.sum(y_mask)
 model.add_loss(cross_entropy)
 model.compile(optimizer=Adam(1e-5))
 
+print("开始加载模型参数...")
 # evaluator = Evaluate()
 model.load_weights('./best_model.weights')
+graph = tf.get_default_graph()
 
  
 app = Flask(__name__)     # 创建一个Flask对象，__name__传成其他字符串也行。
@@ -200,7 +204,9 @@ class AbstractView(views.MethodView):
     def post(self):
         art = request.form.get("article")
         print(art)
-        abstract = gen_sent(model, tokenizer, art, topk=2)
+        with graph.as_default():
+            abstract = gen_sent(model, tokenizer,art)
+        print("摘要：", abstract)
         return abstract
  
 app.add_url_rule('/abstract.html', view_func=AbstractView.as_view(name='abstract'))
@@ -212,4 +218,6 @@ def hello_world():
     return 'Hello World!'
  
 if __name__ == '__main__':
-    app.run()
+    host = '0.0.0.0'
+    port = 5555
+    app.run(host=host, port=port)
