@@ -210,7 +210,7 @@ class AbstractView(views.MethodView):
         end = time.time()
         print("time:", end-start)
         print("摘要：", abstract)
-        return json.dumps(ret, encoding='utf-8')
+        return json.dumps(ret)
  
 app.add_url_rule('/abstract.html', view_func=AbstractView.as_view(name='abstract'))
 
