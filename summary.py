@@ -17,14 +17,14 @@ import pandas as pd
 
 os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
-config_path = 'seq2seq_config.json'
+config_path = './data/seq2seq_vocab.json'
 min_count = 32
 max_input_len = 256
 max_output_len = 32
 batch_size = 16
 steps_per_epoch = 1000
 epochs = 10000
-
+model_name = './model/best_model.weights'
 
 def read_text():
     df = pd.read_csv('data/train.csv')
@@ -132,14 +132,14 @@ class Evaluate(Callback):
         # 保存最优
         if logs['loss'] <= self.lowest:
             self.lowest = logs['loss']
-            model.save_weights('./best_model.weights')
+            model.save_weights(model_name)
         # 演示效果
         show()
 
 # 模型相关配置
-config_path = 'chinese_L-12_H-768_A-12/bert_config.json'
-checkpoint_path = 'chinese_L-12_H-768_A-12/bert_model.ckpt'
-dict_path = 'chinese_L-12_H-768_A-12/vocab.txt'
+config_path = './model/chinese_L-12_H-768_A-12/bert_config.json'
+checkpoint_path = './model/chinese_L-12_H-768_A-12/bert_model.ckpt'
+dict_path = './model/chinese_L-12_H-768_A-12/vocab.txt'
 
 # 读取词典
 _token_dict = load_vocab(dict_path)
@@ -182,7 +182,7 @@ model.compile(optimizer=Adam(1e-5))
 
 print("开始加载模型参数...")
 # evaluator = Evaluate()
-model.load_weights('./best_model.weights')
+model.load_weights(model_name)
 graph = tf.get_default_graph()
  
 app = Flask(__name__)     # 创建一个Flask对象，__name__传成其他字符串也行。
@@ -191,7 +191,6 @@ class AbstractView(views.MethodView):
     methods = ['GET', 'POST']
  
     def get(self):
-        print("123")
         return render_template('summary.html')
  
     def post(self):
