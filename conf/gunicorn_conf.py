@@ -3,8 +3,8 @@ import logging.handlers
 from logging.handlers import WatchedFileHandler
 import os
 import multiprocessing
-# bind = '127.0.0.1:5555'      # 绑定ip和端口号
-bind = '0.0.0.0:5555'      # 绑定ip和端口号
+bind = '127.0.0.1:5555'      # 绑定ip和端口号
+# bind = '0.0.0.0:5555'      # 绑定ip和端口号
 backlog = 512                # 监听队列
 chdir = './'  # gunicorn要切换到的目的工作目录
 timeout = 30      # 超时
