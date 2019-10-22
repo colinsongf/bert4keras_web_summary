@@ -195,15 +195,22 @@ class AbstractView(views.MethodView):
         return render_template('summary.html')
  
     def post(self):
+        ret = {"status":True, "error": None, "abstract":""}
         art = request.form.get("article")
         print("原文：", art)
         start = time.time()
-        with graph.as_default():
-            abstract = gen_sent(model, tokenizer,art)
+        try:
+            with graph.as_default():
+                abstract = gen_sent(model, tokenizer,art)
+            ret["abstract"] = abstract
+        except Exception as e:
+            ret["error"] = e
+            ret["status"] = False
+        
         end = time.time()
         print("time:", end-start)
         print("摘要：", abstract)
-        return abstract
+        return json.dumps(ret, encoding='utf-8')
  
 app.add_url_rule('/abstract.html', view_func=AbstractView.as_view(name='abstract'))
 

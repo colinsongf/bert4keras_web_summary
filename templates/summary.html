@@ -8,19 +8,20 @@
 </head>
 
 <body>
-    <form name="form" action="abstract.html" method="post">
+    <form name="art-form" action="abstract.html" method="post">
         <p>文章：
             <!-- <input type="text" class="art" id="article" name="article" required minlength="4" maxlength="512"> -->
-            <textarea class="art" name="article"></textarea>
+            <textarea class="art" id="art-cont" name="article"></textarea>
 
-            <input type="submit" name="提交" value="提 交">
+            <input id="art-sub" type="submit" name="提交" value="提 交">
             <input type="reset" name="重写" value="重 写">
 
         </p>
     </form>
-    <p>摘要： <textarea class="abs" name="abstract"></textarea>
+    <p>摘要： <textarea class="abs" id="abs-cont" name="abstract"></textarea>
 
-        <script type="text/javascript" src="/static/js/jquery-1.12.4.js"></script>
+        <script type="text/javascript" src="../static/js/jquery-1.12.4.js"></script>
+        <script type="text/javascript" src="../static/js/summary.js"></script>
 </body>
 
 </html>
