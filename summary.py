@@ -18,13 +18,13 @@ import pandas as pd
 os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
 config_path = './data/seq2seq_vocab.json'
-min_count = 32
+min_count = 0 
 max_input_len = 256
 max_output_len = 32
 batch_size = 16
 steps_per_epoch = 1000
-epochs = 10000
-model_name = './model/best_model.weights'
+epochs = 1000
+model_name = './model/model_0.weights'
 
 def read_text():
     df = pd.read_csv('data/train.csv')
@@ -182,7 +182,9 @@ model.compile(optimizer=Adam(1e-5))
 
 print("开始加载模型参数...")
 # evaluator = Evaluate()
+
 model.load_weights(model_name)
+
 graph = tf.get_default_graph()
  
 app = Flask(__name__)     # 创建一个Flask对象，__name__传成其他字符串也行。
